@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Goods Search</title>
+    <title>Goods Search & Order</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -65,30 +65,65 @@
             margin-top: 20px;
         }
 
-        .result-item {
-            margin-bottom: 10px;
+        /* Table styles */
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .result-table th,
+        .result-table td {
             padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+            text-align: left;
+        }
+
+        .result-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        /* Order form styles */
+        #orderForm {
+            margin-top: 30px;
+        }
+
+        #orderItems {
+            margin-bottom: 20px;
+        }
+
+        #orderItems label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #orderItems input {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-<!-- Logo 3M -->
 <div class="logo-container">
     <img src="3M_wordmark.svg.png" alt="3M Company logo">
 </div>
 
 <div class="container">
-    <h1>Goods Search</h1>
+    <h1>Goods Search & Order</h1>
     <input type="text" id="searchInput" placeholder="Enter a code" oninput="suggestGoods()" onfocus="suggestGoods()">
     <button onclick="search()">Search</button>
     <button onclick="clearSearch()">Clear All Results</button>
     <div id="resultsContainer" class="results"></div>
     <!-- Add the dropdown element here -->
     <select id="suggestionsDropdown" onchange="selectSuggestion()" style="display: none;"></select>
+    
+    <!-- Order form -->
+    <form id="orderForm" onsubmit="submitOrder(event)">
+        <h2>Order Form</h2>
+        <div id="orderItems"></div>
+        <button type="submit">Place Order</button>
+    </form>
 </div>
 
 <script>
@@ -103,7 +138,6 @@
 
     function fetchData() {
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${'1z78L-ekU5Lk-F3b4VHhKS3b1lEYmbbG9bUjmG4ss6Zc'}/values/Trang tính1?key=${'AIzaSyCC44a5q3PVMDLMNHKkeNU6LmLDM9vxdL8'}`;
-
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -122,7 +156,11 @@
     }
 
     // Call fetchData function when the page loads
-    window.onload = fetchData;
+    window.onload = function() {
+        fetchData();
+        // Refresh data periodically (every 5 minutes)
+        setInterval(fetchData, 5 * 60 * 1000);
+    };
 
     function suggestGoods() {
         const codeToSearch = document.getElementById('searchInput').value.trim(); // Trim whitespace from input
@@ -194,13 +232,55 @@
     function displayResults() {
         const resultsContainer = document.getElementById('resultsContainer');
         resultsContainer.innerHTML = ''; // Clear previous results
-        searchResults.forEach(result => {
-            const p = document.createElement('p');
-            p.textContent = result;
-            resultsContainer.appendChild(p);
+
+        if (searchResults.length === 0) {
+            resultsContainer.innerHTML = 'No results found.';
+            return;
+        }
+
+        const table = document.createElement('table');
+        table.classList.add('result-table');
+
+        // Create table header
+        const headerRow = document.createElement('tr');
+        const headers = ['Mã hàng', 'Tên hàng', 'Số lượng'];
+        headers.forEach(headerText => {
+            const headerCell = document.createElement('th');
+            headerCell.textContent = headerText;
+            headerRow.appendChild(headerCell);
         });
+        table.appendChild(headerRow);
+
+        // Create table rows
+        searchResults.forEach(result => {
+            const [code, name, quantity] = parseResult(result);
+
+            const row = document.createElement('tr');
+            const codeCell = document.createElement('td');
+            codeCell.textContent = code;
+            const nameCell = document.createElement('td');
+            nameCell.textContent = name;
+            const quantityCell = document.createElement('td');
+            quantityCell.textContent = quantity;
+
+            row.appendChild(codeCell);
+            row.appendChild(nameCell);
+            row.appendChild(quantityCell);
+            table.appendChild(row);
+        });
+
+        resultsContainer.appendChild(table);
         // Hide the dropdown after search
         document.getElementById('suggestionsDropdown').style.display = 'none';
+        populateOrderForm(); // Populate the order form with search results
+    }
+
+    function parseResult(result) {
+        const match = result.match(/Mã hàng: (.+), Tên hàng: (.+), Số lượng: (\d+)/);
+        if (match) {
+            return [match[1], match[2], match[3]];
+        }
+        return ['', '', ''];
     }
 
     function clearSearch() {
@@ -208,12 +288,61 @@
         displayResults(); // Clear displayed results
     }
 
+    // Function to submit the order
+    function submitOrder(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        // Get order details
+        const orderItems = [];
+        const inputs = document.querySelectorAll('#orderItems input[type="number"]');
+        inputs.forEach(input => {
+            const code = input.dataset.code;
+            const quantity = parseInt(input.value);
+            if (quantity > 0) {
+                orderItems.push({ code, quantity });
+            }
+        });
+
+        // Do something with the order items (e.g., send them to a server)
+        console.log('Order submitted:', orderItems);
+
+        // You can add further processing here, such as sending the order to a server
+        // and displaying a confirmation message to the user.
+    }
+
     // Add event listener to input field to handle "Enter" key press
-    document.getElementById('searchInput').addEventListener('keydown', function (event) {
+    document.getElementById('searchInput').addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             search(); // Call the search function when "Enter" key is pressed
         }
     });
+
+    // Function to populate the order form with search results
+    function populateOrderForm() {
+        const orderItemsDiv = document.getElementById('orderItems');
+        orderItemsDiv.innerHTML = ''; // Clear previous order items
+
+        searchResults.forEach(result => {
+            const match = result.match(/Mã hàng: (.+), Tên hàng: (.+), Số lượng: (\d+)/);
+            if (match) {
+                const code = match[1];
+                const name = match[2];
+                const quantity = parseInt(match[3]);
+
+                const label = document.createElement('label');
+                label.textContent = `${name} (Code: ${code}) - Available: ${quantity}`;
+                
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.min = '0';
+                input.value = '0';
+                input.dataset.code = code;
+
+                orderItemsDiv.appendChild(label);
+                orderItemsDiv.appendChild(input);
+            }
+        });
+    }
 </script>
 </body>
 </html>
