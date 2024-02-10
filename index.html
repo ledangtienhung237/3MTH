@@ -94,18 +94,14 @@
 <script>
     let searchResults = []; // Array to store search results
     let currentSuggestions = []; // Array to store current suggestions
+    let allData = []; // Variable to store all data
 
     const sheetId = '1z78L-ekU5Lk-F3b4VHhKS3b1lEYmbbG9bUjmG4ss6Zc'; // Replace 'YOUR_SHEET_ID' with your actual sheet ID
     const apiKey = 'AIzaSyCC44a5q3PVMDLMNHKkeNU6LmLDM9vxdL8'; // Replace 'YOUR_API_KEY' with your actual API key
 
     const maxSuggestions = 10; // Maximum number of suggestions to display
 
-    function suggestGoods() {
-        const codeToSearch = document.getElementById('searchInput').value.trim(); // Trim whitespace from input
-
-        // Show the dropdown regardless of input
-        const dropdown = document.getElementById('suggestionsDropdown');
-
+    function fetchData() {
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${'1z78L-ekU5Lk-F3b4VHhKS3b1lEYmbbG9bUjmG4ss6Zc'}/values/Trang tính1?key=${'AIzaSyCC44a5q3PVMDLMNHKkeNU6LmLDM9vxdL8'}`;
 
         fetch(url)
@@ -117,27 +113,34 @@
             })
             .then(data => {
                 console.log('Data from Google Sheets:', data);
-                // Search for suggestions based on the partial code
-                const values = data.values;
-                const suggestions = [];
-                for (let i = 1; i < values.length; i++) { // Start from 1 to skip header row
-                    if (values[i][0].includes(codeToSearch)) {
-                        suggestions.push(values[i][0]); // Add the code to suggestions if it matches partially
-                    }
-                }
-                currentSuggestions = suggestions.slice(0, maxSuggestions);
-                displaySuggestions(currentSuggestions); // Display the suggestions in dropdown
-
-                // Hide dropdown if there are no suggestions or search input is empty
-                if (currentSuggestions.length === 0 || codeToSearch === '') {
-                    dropdown.style.display = 'none';
-                } else {
-                    dropdown.style.display = 'block';
-                }
+                // Store all data except header row
+                allData = data.values.slice(1);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
+    }
+
+    // Call fetchData function when the page loads
+    window.onload = fetchData;
+
+    function suggestGoods() {
+        const codeToSearch = document.getElementById('searchInput').value.trim(); // Trim whitespace from input
+
+        // Show the dropdown regardless of input
+        const dropdown = document.getElementById('suggestionsDropdown');
+
+        // Search for suggestions based on the partial code
+        const suggestions = allData.filter(row => row[0].includes(codeToSearch)).map(row => row[0]);
+        currentSuggestions = suggestions.slice(0, maxSuggestions);
+        displaySuggestions(currentSuggestions); // Display the suggestions in dropdown
+
+        // Hide dropdown if there are no suggestions or search input is empty
+        if (currentSuggestions.length === 0 || codeToSearch === '') {
+            dropdown.style.display = 'none';
+        } else {
+            dropdown.style.display = 'block';
+        }
     }
 
     function displaySuggestions(suggestions) {
@@ -168,42 +171,24 @@
 
     function search() {
         const codeToSearch = document.getElementById('searchInput').value.trim(); // Trim whitespace from input
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${'1z78L-ekU5Lk-F3b4VHhKS3b1lEYmbbG9bUjmG4ss6Zc'}/values/Trang tính1?key=${'AIzaSyCC44a5q3PVMDLMNHKkeNU6LmLDM9vxdL8'}`;
 
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Data from Google Sheets:', data);
-                // Search for the code and retrieve the quantity and name
-                const values = data.values;
-                for (let i = 1; i < values.length; i++) { // Start from 1 to skip header row
-                    if (values[i][0].trim() === codeToSearch) { // Trim whitespace from code in data
-                        const name = values[i][1]; // Name is at index 1
-                        const quantity = values[i][2]; // Quantity is at index 2
-                        const result = `Mã hàng: ${codeToSearch}, Tên hàng: ${name}, Số lượng: ${quantity}`;
-                        searchResults.push(result); // Add result to array
-                        displayResults(); // Display updated results
-                        return;
-                    }
-                }
-                // If code not found, check if there are suggestions and use the first suggestion
-                if (currentSuggestions.length > 0 && codeToSearch.length < currentSuggestions[0].length) {
-                    document.getElementById('searchInput').value = currentSuggestions[0];
-                    search(); // Trigger search based on the updated search input
-                } else {
-                    const result = `Mã hàng ${codeToSearch} not found`;
-                    searchResults.push(result); // Add result to array
-                    displayResults(); // Display updated results
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
+        // Search for the code and retrieve the quantity and name
+        const result = allData.find(row => row[0].trim() === codeToSearch);
+        if (result) {
+            const [code, name, quantity] = result;
+            const resultText = `Mã hàng: ${code}, Tên hàng: ${name}, Số lượng: ${quantity}`;
+            searchResults.push(resultText); // Add result to array
+        } else {
+            // If code not found, check if there are suggestions and use the first suggestion
+            if (currentSuggestions.length > 0 && codeToSearch.length < currentSuggestions[0].length) {
+                document.getElementById('searchInput').value = currentSuggestions[0];
+                search(); // Trigger search based on the updated search input
+                return;
+            } else {
+                searchResults.push(`Mã hàng ${codeToSearch} not found`); // Add result to array
+            }
+        }
+        displayResults(); // Display updated results
     }
 
     function displayResults() {
