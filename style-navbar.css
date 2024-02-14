@@ -13,14 +13,14 @@ i {
 /*----------bootstrap-navbar-css------------*/
 .navbar-logo{
 	padding: 15px;
-	color: #5161ce;
+	color: #1c87df;
 }
 .navbar-nav {
 	float: right;
   }
   
 .navbar-mainbg{
-	background-color: #5161ce;
+	background-color: #1c87df;
 	padding: 0px;
 }
 #navbarSupportedContent{
@@ -50,7 +50,7 @@ i {
 	
 }
 #navbarSupportedContent>ul>li.active>a{
-	color: #5161ce;
+	color: #1c87df; /*#5161ce;*/
 	background-color: transparent;
 	transition: all 0.7s;
 }
@@ -104,7 +104,7 @@ i {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: #5161ce;
+    background-color: #1c87df;
 }
 .hori-selector .right:before{
 	bottom: 0;
