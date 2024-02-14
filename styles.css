@@ -1,0 +1,105 @@
+/* styles.css */
+
+/* Header */
+.header {
+   background: #ffffff;
+   color: white;
+   padding: 60px;
+ }
+
+.header-container {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 0 20px;
+}
+
+.logo-container-left {
+   width: 50%; /* Make space for the logo containers */
+   text-align: left;
+}
+
+.logo-container-left img {
+   height: 50px;
+}
+.logo-container-right {
+   width: 50%; /* Make space for the logo containers */
+   text-align: right;
+}
+
+.logo-container-right img {
+   height: 50px;
+}
+
+ 
+ 
+
+
+.container {
+   max-width: 800px;
+   margin: 20px auto;
+   padding: 20px;
+   background-color: #fff;
+   border-radius: 8px;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+   font-size: 24px;
+   margin-bottom: 20px;
+   text-align: center;
+   color: #333;
+}
+
+input[type="text"] {
+   width: calc(100% - 150px);
+   padding: 10px;
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   font-size: 16px;
+   outline: none;
+}
+
+.button-7 {
+   background-color: #0095ff;
+   border: 1px solid transparent;
+   border-radius: 3px;
+   box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
+   box-sizing: border-box;
+   color: #fff;
+   cursor: pointer;
+   display: inline-block;
+   font-family: -apple-system, system-ui, "Segoe UI", "Liberation Sans", sans-serif;
+   font-size: 13px;
+   font-weight: 400;
+   line-height: 1.15385;
+   margin: 0;
+   outline: none;
+   padding: 8px .8em;
+   position: relative;
+   text-align: center;
+   text-decoration: none;
+   user-select: none;
+   -webkit-user-select: none;
+   touch-action: manipulation;
+   vertical-align: baseline;
+   white-space: nowrap;
+}
+
+.button-7:hover,
+.button-7:focus {
+   background-color: #07c;
+}
+
+.button-7:focus {
+   box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
+}
+
+.button-7:active {
+   background-color: #0064bd;
+   box-shadow: none;
+}
+
+.results {
+   margin-top: 20px;
+}
