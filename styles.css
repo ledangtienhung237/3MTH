@@ -4,7 +4,7 @@
 .header {
    background: #ffffff;
    color: white;
-   padding: 60px;
+   padding: 10px;
  }
 
 .header-container {
@@ -103,3 +103,40 @@ input[type="text"] {
 .results {
    margin-top: 20px;
 }
+
+body, html {
+   height: 100%;
+ }
+ 
+ * {
+   box-sizing: border-box;
+ }
+ 
+ body, html {
+   margin: 0;
+   padding: 0;
+   height: 100%;
+}
+
+html, body {
+   margin: 0;
+   padding: 0;
+   height: 100%;
+}
+
+.background-container {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-image: url('pexels-pixabay-255527.jpg'); /* Replace with your image */
+   background-size: cover;
+   background-position: center;
+   filter: blur(5px); /* Adjust the blur effect as needed */
+   z-index: -1; /* Ensure the container is behind other content */
+}
+
+/* Additional styling for other elements can go here */
+
+
