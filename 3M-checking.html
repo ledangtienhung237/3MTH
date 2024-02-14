@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Goods Search & Order</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style-navbar.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">
+
+</head>
+<header>
+    <div class="header" >
+        
+        <img class="" src="logo-TH.jpg" alt="TH Logo" onclick="window.open('https://th-science.com.vn/vn/index.html');" >
+       
+      </div>
+</header>
+<body>
+    <!---Navbar code -->
+    <nav class="navbar navbar-expand-custom navbar-mainbg">
+ 
+        <button class="navbar-toggler" type="button" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars text-white"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <div class="hori-selector"><div class="left"></div><div class="right"></div></div>
+                <li class="nav-item">
+                    <a class="nav-link " href="javascript:void(0);"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="javascript:void(0);"><i class="far fa-address-book"></i>Khách hàng</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0);"><i class="far fa-clone"></i>Tồn Kho</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0);"><i class="far fa-calendar-alt"></i>Lịch Trình</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0);"><i class="far fa-chart-bar"></i>Thống kê</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0);"><i class="far fa-copy"></i>Tài Liệu</a>
+                </li>
+            </ul>
+        </div>
+      </nav>
+ 
+
+
+<!--Search Engine is below.-->
+
+    <div class="container">
+        <h1>Goods Search & Order</h1>
+        <input type="text" id="searchInput" placeholder="Enter a code" oninput="suggestGoods()" onfocus="suggestGoods()">
+        <button class="button-7" onclick="search()">Search</button>
+        <button class="button-7" onclick="clearSearch()">Clear All Results</button>
+        <div id="resultsContainer" class="results"></div>
+        <!-- Add the dropdown element here -->
+        <select id="suggestionsDropdown" onchange="selectSuggestion()" style="display: none;"></select>
+        
+        <!-- Order form -->
+        <form id="orderForm" onsubmit="submitOrder(event)" style="display: none;">
+            <h2>Order Form</h2>
+            <div id="orderItems"></div>
+            <table id="orderTable" border="1">
+                <thead>
+                    <tr>
+                        <th>Mã hàng</th>
+                        <th>Tên hàng</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Order rows will be added dynamically here -->
+                </tbody>
+            </table>
+            
+            
+            </table>
+            <button class="button-7" type="submit">Place Order</button>
+        </form>
+      
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="script-navbar.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>
