@@ -4,345 +4,90 @@
     <title>Goods Search & Order</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        .logo-container {
-            position: fixed; /* or absolute depending on your layout */
-            top: 0;
-            left: 0;
-        }
-        .logo-container img {
-            max-width: 200px; /* adjust as needed */
-            max-height: 200px; /* adjust as needed */
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
-            margin: 0;
-            padding: 0;
-        }
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style-navbar.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">
 
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #333;
-        }
-
-        input[type="text"] {
-            width: calc(100% - 150px);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            outline: none;
-        }
-
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .results {
-            margin-top: 20px;
-        }
-
-        /* Table styles */
-        .result-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .result-table th,
-        .result-table td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: left;
-        }
-
-        .result-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-
-        /* Order form styles */
-        #orderForm {
-            margin-top: 30px;
-        }
-
-        #orderItems {
-            margin-bottom: 20px;
-        }
-
-        #orderItems label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        #orderItems input {
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
+<header>
+    <div class="header" >
+        
+        <img class="" src="logo-TH.jpg" alt="TH Logo" onclick="window.open('https://th-science.com.vn/vn/index.html');" >
+       
+      </div>
+</header>
 <body>
+    <!---Navbar code -->
+    <nav class="navbar navbar-expand-custom navbar-mainbg">
+ 
+        <button class="navbar-toggler" type="button" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars text-white"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <div class="hori-selector"><div class="left"></div><div class="right"></div></div>
+                <li class="nav-item">
+                    <a class="nav-link " href="javascript:void(0);"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="javascript:void(0);"><i class="far fa-address-book"></i>Khách hàng</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0);"><i class="far fa-clone"></i>Tồn Kho</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0);"><i class="far fa-calendar-alt"></i>Lịch Trình</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0);"><i class="far fa-chart-bar"></i>Thống kê</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0);"><i class="far fa-copy"></i>Tài Liệu</a>
+                </li>
+            </ul>
+        </div>
+      </nav>
+ 
 
-<div class="logo-container">
-    <img src="3M_wordmark.svg.png" alt="3M Company logo">
-</div>
 
-<div class="container">
-    <h1>Goods Search & Order</h1>
-    <input type="text" id="searchInput" placeholder="Enter a code" oninput="suggestGoods()" onfocus="suggestGoods()">
-    <button onclick="search()">Search</button>
-    <button onclick="clearSearch()">Clear All Results</button>
-    <div id="resultsContainer" class="results"></div>
-    <!-- Add the dropdown element here -->
-    <select id="suggestionsDropdown" onchange="selectSuggestion()" style="display: none;"></select>
+<!--Search Engine is below.-->
+
+    <div class="container">
+        <h1>Goods Search & Order</h1>
+        <input type="text" id="searchInput" placeholder="Enter a code" oninput="suggestGoods()" onfocus="suggestGoods()">
+        <button class="button-7" onclick="search()">Search</button>
+        <button class="button-7" onclick="clearSearch()">Clear All Results</button>
+        <div id="resultsContainer" class="results"></div>
+        <!-- Add the dropdown element here -->
+        <select id="suggestionsDropdown" onchange="selectSuggestion()" style="display: none;"></select>
+        
+        <!-- Order form -->
+        <form id="orderForm" onsubmit="submitOrder(event)" style="display: none;">
+            <h2>Order Form</h2>
+            <div id="orderItems"></div>
+            <table id="orderTable" border="1">
+                <thead>
+                    <tr>
+                        <th>Mã hàng</th>
+                        <th>Tên hàng</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Order rows will be added dynamically here -->
+                </tbody>
+            </table>
+            
+            
+            </table>
+            <button class="button-7" type="submit">Place Order</button>
+        </form>
+      
+    </div>
     
-    <!-- Order form -->
-    <form id="orderForm" onsubmit="submitOrder(event)">
-        <h2>Order Form</h2>
-        <div id="orderItems"></div>
-        <button type="submit">Place Order</button>
-    </form>
-</div>
-
-<script>
-    let searchResults = []; // Array to store search results
-    let currentSuggestions = []; // Array to store current suggestions
-    let allData = []; // Variable to store all data
-
-    const sheetId = '1z78L-ekU5Lk-F3b4VHhKS3b1lEYmbbG9bUjmG4ss6Zc'; // Replace 'YOUR_SHEET_ID' with your actual sheet ID
-    const apiKey = 'AIzaSyCC44a5q3PVMDLMNHKkeNU6LmLDM9vxdL8'; // Replace 'YOUR_API_KEY' with your actual API key
-
-    const maxSuggestions = 10; // Maximum number of suggestions to display
-
-    function fetchData() {
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${'1z78L-ekU5Lk-F3b4VHhKS3b1lEYmbbG9bUjmG4ss6Zc'}/values/Trang tính1?key=${'AIzaSyCC44a5q3PVMDLMNHKkeNU6LmLDM9vxdL8'}`;
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Data from Google Sheets:', data);
-                // Store all data except header row
-                allData = data.values.slice(1);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }
-
-    // Call fetchData function when the page loads
-    window.onload = function() {
-        fetchData();
-        // Refresh data periodically (every 5 minutes)
-        setInterval(fetchData, 5 * 60 * 1000);
-    };
-
-    function suggestGoods() {
-        const codeToSearch = document.getElementById('searchInput').value.trim(); // Trim whitespace from input
-
-        // Show the dropdown regardless of input
-        const dropdown = document.getElementById('suggestionsDropdown');
-
-        // Search for suggestions based on the partial code
-        const suggestions = allData.filter(row => row[0].includes(codeToSearch)).map(row => row[0]);
-        currentSuggestions = suggestions.slice(0, maxSuggestions);
-        displaySuggestions(currentSuggestions); // Display the suggestions in dropdown
-
-        // Hide dropdown if there are no suggestions or search input is empty
-        if (currentSuggestions.length === 0 || codeToSearch === '') {
-            dropdown.style.display = 'none';
-        } else {
-            dropdown.style.display = 'block';
-        }
-    }
-
-    function displaySuggestions(suggestions) {
-        const dropdown = document.getElementById('suggestionsDropdown');
-        dropdown.innerHTML = ''; // Clear previous suggestions
-        if (suggestions.length > 0) {
-            dropdown.style.display = 'block';
-            suggestions.forEach(suggestion => {
-                const option = document.createElement('option');
-                option.value = suggestion;
-                option.textContent = suggestion; // Set the content of the option
-                dropdown.appendChild(option);
-            });
-
-            // Adjust the height of the dropdown to fit all suggestions
-            dropdown.size = suggestions.length;
-        } else {
-            dropdown.style.display = 'none';
-        }
-    }
-
-
-    function selectSuggestion() {
-        const selectedSuggestion = document.getElementById('suggestionsDropdown').value;
-        document.getElementById('searchInput').value = selectedSuggestion;
-        search(); // Trigger search based on selected suggestion
-    }
-
-    function search() {
-        const codeToSearch = document.getElementById('searchInput').value.trim(); // Trim whitespace from input
-
-        // Search for the code and retrieve the quantity and name
-        const result = allData.find(row => row[0].trim() === codeToSearch);
-        if (result) {
-            const [code, name, quantity] = result;
-            const resultText = `Mã hàng: ${code}, Tên hàng: ${name}, Số lượng: ${quantity}`;
-            searchResults.push(resultText); // Add result to array
-        } else {
-            // If code not found, check if there are suggestions and use the first suggestion
-            if (currentSuggestions.length > 0 && codeToSearch.length < currentSuggestions[0].length) {
-                document.getElementById('searchInput').value = currentSuggestions[0];
-                search(); // Trigger search based on the updated search input
-                return;
-            } else {
-                searchResults.push(`Mã hàng ${codeToSearch} not found`); // Add result to array
-            }
-        }
-        displayResults(); // Display updated results
-    }
-
-    function displayResults() {
-        const resultsContainer = document.getElementById('resultsContainer');
-        resultsContainer.innerHTML = ''; // Clear previous results
-
-        if (searchResults.length === 0) {
-            resultsContainer.innerHTML = 'No results found.';
-            return;
-        }
-
-        const table = document.createElement('table');
-        table.classList.add('result-table');
-
-        // Create table header
-        const headerRow = document.createElement('tr');
-        const headers = ['Mã hàng', 'Tên hàng', 'Số lượng'];
-        headers.forEach(headerText => {
-            const headerCell = document.createElement('th');
-            headerCell.textContent = headerText;
-            headerRow.appendChild(headerCell);
-        });
-        table.appendChild(headerRow);
-
-        // Create table rows
-        searchResults.forEach(result => {
-            const [code, name, quantity] = parseResult(result);
-
-            const row = document.createElement('tr');
-            const codeCell = document.createElement('td');
-            codeCell.textContent = code;
-            const nameCell = document.createElement('td');
-            nameCell.textContent = name;
-            const quantityCell = document.createElement('td');
-            quantityCell.textContent = quantity;
-
-            row.appendChild(codeCell);
-            row.appendChild(nameCell);
-            row.appendChild(quantityCell);
-            table.appendChild(row);
-        });
-
-        resultsContainer.appendChild(table);
-        // Hide the dropdown after search
-        document.getElementById('suggestionsDropdown').style.display = 'none';
-        populateOrderForm(); // Populate the order form with search results
-    }
-
-    function parseResult(result) {
-        const match = result.match(/Mã hàng: (.+), Tên hàng: (.+), Số lượng: (\d+)/);
-        if (match) {
-            return [match[1], match[2], match[3]];
-        }
-        return ['', '', ''];
-    }
-
-    function clearSearch() {
-        searchResults = []; // Clear search results array
-        displayResults(); // Clear displayed results
-    }
-
-    // Function to submit the order
-    function submitOrder(event) {
-        event.preventDefault(); // Prevent the form from submitting normally
-
-        // Get order details
-        const orderItems = [];
-        const inputs = document.querySelectorAll('#orderItems input[type="number"]');
-        inputs.forEach(input => {
-            const code = input.dataset.code;
-            const quantity = parseInt(input.value);
-            if (quantity > 0) {
-                orderItems.push({ code, quantity });
-            }
-        });
-
-        // Do something with the order items (e.g., send them to a server)
-        console.log('Order submitted:', orderItems);
-
-        // You can add further processing here, such as sending the order to a server
-        // and displaying a confirmation message to the user.
-    }
-
-    // Add event listener to input field to handle "Enter" key press
-    document.getElementById('searchInput').addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            search(); // Call the search function when "Enter" key is pressed
-        }
-    });
-
-    // Function to populate the order form with search results
-    function populateOrderForm() {
-        const orderItemsDiv = document.getElementById('orderItems');
-        orderItemsDiv.innerHTML = ''; // Clear previous order items
-
-        searchResults.forEach(result => {
-            const match = result.match(/Mã hàng: (.+), Tên hàng: (.+), Số lượng: (\d+)/);
-            if (match) {
-                const code = match[1];
-                const name = match[2];
-                const quantity = parseInt(match[3]);
-
-                const label = document.createElement('label');
-                label.textContent = `${name} (Code: ${code}) - Available: ${quantity}`;
-                
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.min = '0';
-                input.value = '0';
-                input.dataset.code = code;
-
-                orderItemsDiv.appendChild(label);
-                orderItemsDiv.appendChild(input);
-            }
-        });
-    }
-</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="script-navbar.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>
