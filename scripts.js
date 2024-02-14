@@ -182,7 +182,7 @@ function displayResults() {
 // Function to add item to order when the order button is clicked
 function addToOrder(event) {
     const code = event.target.dataset.code;
-    const orderTable = document.getElementById('orderTable');
+    const orderTableBody = document.getElementById('orderTableBody');
 
     // Find the item details by code
     const result = allData.find(row => row[0].trim() === code);
@@ -217,8 +217,17 @@ function addToOrder(event) {
         priceCell.textContent = formatCurrency(0); // Initial price set to 0
         row.appendChild(priceCell);
 
-        // Append the row to the order table
-        orderTable.appendChild(row);
+        // Create a remove button
+        const removeButtonCell = document.createElement('td');
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'Remove';
+        removeButton.classList.add('remove-button'); // Add class for styling
+        removeButton.addEventListener('click', removeItemFromOrder); // Add click event listener
+        removeButtonCell.appendChild(removeButton);
+        row.appendChild(removeButtonCell);
+
+        // Append the row to the order table body
+        orderTableBody.appendChild(row);
     }
 }
 
@@ -241,8 +250,13 @@ function updatePrice(event) {
 
         // Update the price cell with formatted total price
         priceCell.textContent = formatCurrency(totalPrice);
+
+        // Trigger total amount update when quantity changes
+        updateTotalAmount();
     }
 }
+
+
 
 
 function parseResult(result) {
@@ -288,3 +302,37 @@ document.getElementById('searchInput').addEventListener('keydown', function(even
         search(); // Call the search function when "Enter" key is pressed
     }
 });
+// Function to remove an item from the order
+function removeItemFromOrder(event) {
+    const row = event.target.closest('tr');
+    row.remove();
+    updateTotalAmount();
+}
+
+// Function to update total amount
+function updateTotalAmount() {
+    const orderTable = document.getElementById('orderTable');
+    const rows = orderTable.querySelectorAll('tbody tr');
+    let totalAmount = 0;
+
+    rows.forEach(row => {
+        const priceCell = row.querySelector('td:nth-child(4)');
+        const price = parseFloat(priceCell.textContent.replace(/\D/g, '')); // Parse price as numeric value
+        totalAmount += price; // Add the price to the total amount
+    });
+
+    // Get the discount value
+    const discountInput = document.getElementById('discountInput');
+    const discountPercentage = parseFloat(discountInput.value) || 0; // Default to 0 if input is empty or not a valid number
+
+    // Calculate the total amount after applying discount
+    const discountedAmount = totalAmount * (1 - discountPercentage / 100);
+
+    // Display the total amount after formatting
+    const totalAmountCell = document.getElementById('totalAmount');
+    totalAmountCell.textContent = formatCurrency(discountedAmount);
+}
+
+
+
+
