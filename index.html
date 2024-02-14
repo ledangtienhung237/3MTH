@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 <head>
+    
     <title>Goods Search & Order</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,15 +12,20 @@
 
 </head>
 <header>
+    
     <div class="header" >
         
         <img class="" src="logo-TH.jpg" alt="TH Logo" onclick="window.open('https://th-science.com.vn/vn/index.html');" >
        
       </div>
 </header>
-<body>
-    <!---Navbar code -->
-    <nav class="navbar navbar-expand-custom navbar-mainbg">
+<body >
+
+      <!-- Background container with blur effect -->
+      <div class="background-container"></div>
+
+     <!---Navbar code -->
+    <nav class="navbar navbar-expand-custom navbar-mainbg ">
  
         <button class="navbar-toggler" type="button" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars text-white"></i>
@@ -52,7 +59,8 @@
 
 <!--Search Engine is below.-->
 
-    <div class="container">
+    <div class="container bg-text">
+        
         <h1>Goods Search & Order</h1>
         <input type="text" id="searchInput" placeholder="Enter a code" oninput="suggestGoods()" onfocus="suggestGoods()">
         <button class="button-7" onclick="search()">Search</button>
@@ -77,6 +85,20 @@
                 <tbody>
                     <!-- Order rows will be added dynamically here -->
                 </tbody>
+                <tbody id="orderTableBody">
+                    <!-- Order rows will be added dynamically here -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">Discount:</td>
+                        <td><input type="number" id="discountInput" placeholder="Discount %" min="0" max="100" step="0.01" oninput="updateTotalAmount()">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">Total:</td>
+                        <td id="totalAmount" colspan="3">Total: </td>
+                    </tr>
+                </tfoot>
             </table>
             
             
@@ -84,10 +106,12 @@
             <button class="button-7" type="submit">Place Order</button>
         </form>
       
+        
     </div>
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script-navbar.js"></script>
     <script src="scripts.js"></script>
+
 </body>
 </html>
