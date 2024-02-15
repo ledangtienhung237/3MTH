@@ -33,24 +33,9 @@ window.onload = function() {
     setInterval(fetchData, 5 * 60 * 1000);
 };
 
-function suggestGoods() {
-    const codeToSearch = document.getElementById('searchInput').value.trim(); // Trim whitespace from input
 
-    // Show the dropdown regardless of input
-    const dropdown = document.getElementById('suggestionsDropdown');
 
-    // Search for suggestions based on the partial code
-    const suggestions = allData.filter(row => row[0].includes(codeToSearch)).map(row => row[0]);
-    currentSuggestions = suggestions.slice(0, maxSuggestions);
-    displaySuggestions(currentSuggestions); // Display the suggestions in dropdown
 
-    // Hide dropdown if there are no suggestions or search input is empty
-    if (currentSuggestions.length === 0 || codeToSearch === '') {
-        dropdown.style.display = 'none';
-    } else {
-        dropdown.style.display = 'block';
-    }
-}
 
 function displaySuggestions(suggestions) {
     const dropdown = document.getElementById('suggestionsDropdown');
@@ -77,27 +62,47 @@ function selectSuggestion() {
     search(); // Trigger search based on selected suggestion
 }
 
-function search() {
-    const codeToSearch = document.getElementById('searchInput').value.trim(); // Trim whitespace from input
 
-    // Search for the code and retrieve the quantity, name, and price
-    const result = allData.find(row => row[0].trim() === codeToSearch);
+
+
+function suggestGoods() {
+    const input = document.getElementById('searchInput').value.trim().toLowerCase(); // Trim whitespace from input and convert to lowercase
+
+    // Show the dropdown regardless of input
+    const dropdown = document.getElementById('suggestionsDropdown');
+
+    // Search for suggestions based on index [1]
+    const suggestions = allData.filter(row => row[1].toLowerCase().includes(input)).map(row => row[1]);
+    currentSuggestions = suggestions.slice(0, maxSuggestions);
+    displaySuggestions(currentSuggestions); // Display the suggestions in dropdown
+
+    // Hide dropdown if there are no suggestions or search input is empty
+    dropdown.style.display = currentSuggestions.length === 0 || input === '' ? 'none' : 'block';
+}
+
+function search() {
+    const input = document.getElementById('searchInput').value.trim().toLowerCase(); // Trim whitespace from input and convert to lowercase
+
+    // Search for the input in index [1]
+    const result = allData.find(row => row[1].toLowerCase() === input);
+
     if (result) {
-        const [code, name, quantity, price] = result;
-        const resultText = `Mã hàng: ${code}, Tên hàng: ${name}, Số lượng: ${quantity}, Giá: ${price}`;
+        const [code, name, quantity, price, unit, expireDate] = result;
+        const resultText = `Mã hàng: ${code}, Tên hàng: ${name}, Số lượng: ${quantity}, Giá: ${price}, Đơn vị: ${unit}, Ngày hết hạn: ${expireDate}`;
         searchResults.push(resultText); // Add result to array
     } else {
         // If code not found, check if there are suggestions and use the first suggestion
-        if (currentSuggestions.length > 0 && codeToSearch.length < currentSuggestions[0].length) {
+        if (currentSuggestions.length > 0 && input.length < currentSuggestions[0].length) {
             document.getElementById('searchInput').value = currentSuggestions[0];
             search(); // Trigger search based on the updated search input
             return;
         } else {
-            searchResults.push(`Mã hàng ${codeToSearch} not found`); // Add result to array
+            searchResults.push(`Không tìm thấy mã hàng: ${input}`); // Add result to array
         }
     }
     displayResults(); // Display updated results
 }
+
  
 // Function to format currency
 function formatCurrency(amount) {
@@ -120,7 +125,7 @@ function displayResults() {
     
     // Create table header
     const headerRow = document.createElement('tr');
-    const headers = ['Mã hàng', 'Tên hàng', 'Số lượng', 'Giá', 'Đặt hàng']; // Updated headers to include price and order button
+    const headers = ['Mã hàng', 'Tên hàng', 'Số lượng', 'Giá', 'Đơn vị', 'Ngày hết hạn', 'Đặt hàng']; // Updated headers to include unit, expiration date, and order button
     headers.forEach(headerText => {
         const headerCell = document.createElement('th');
         headerCell.textContent = headerText;
@@ -131,7 +136,7 @@ function displayResults() {
 
     // Create table rows for search results
     searchResults.forEach(result => {
-        const [code, name, quantity, price] = parseResult(result);
+        const [code, name, quantity, price, unit, expirationDate] = parseResult(result);
 
         const row = document.createElement('tr');
         row.style.border = '1px solid black'; // Add border to table row
@@ -156,17 +161,27 @@ function displayResults() {
         priceCell.style.border = '1px solid black'; // Add border to cell
         row.appendChild(priceCell);
 
+        const unitCell = document.createElement('td');
+        unitCell.textContent = unit;
+        unitCell.style.border = '1px solid black'; // Add border to cell
+        row.appendChild(unitCell);
+
+        const expirationDateCell = document.createElement('td');
+        expirationDateCell.textContent = expirationDate;
+        expirationDateCell.style.border = '1px solid black'; // Add border to cell
+        row.appendChild(expirationDateCell);
+
         const orderCell = document.createElement('td');
         const orderButton = document.createElement('button');
-                orderButton.textContent = 'Order';
-                orderButton.classList.add('button-7'); // Add the CSS class 'button-7' to the order button
-                orderButton.dataset.code = code; // Set the code as data attribute for the order button
-                orderButton.addEventListener('click', addToOrder);
-                orderCell.appendChild(orderButton);
-                orderCell.style.border = '1px solid black'; // Add border to cell
-                row.appendChild(orderCell);
+        orderButton.textContent = 'Order';
+        orderButton.classList.add('button-7'); // Add the CSS class 'button-7' to the order button
+        orderButton.dataset.code = code; // Set the code as data attribute for the order button
+        orderButton.addEventListener('click', addToOrder);
+        orderCell.appendChild(orderButton);
+        orderCell.style.border = '1px solid black'; // Add border to cell
+        row.appendChild(orderCell);
 
-                table.appendChild(row);
+        table.appendChild(row);
     });
 
     resultsContainer.appendChild(table);
@@ -178,6 +193,8 @@ function displayResults() {
         document.getElementById('orderForm').style.display = 'block';
     }
 }
+
+
 
 // Function to add item to order when the order button is clicked
 function addToOrder(event) {
@@ -258,16 +275,27 @@ function updatePrice(event) {
 
 
 
-
 function parseResult(result) {
     console.log("Parsing result:", result);
-    const match = result.match(/Mã hàng: (.+), Tên hàng: (.+), Số lượng: (\d+), Giá: (.+)/);
-    console.log("Match:", match);
-    if (match) {
-        return [match[1], match[2], match[3], match[4]];
+    
+    if (Array.isArray(result) && result.length > 0) {
+        // If the result is an array, assume it contains the data directly
+        return result;
+    } else if (typeof result === 'string') {
+        // If the result is a string, try to parse it using regex
+        const match = result.match(/Mã hàng: (.+), Tên hàng: (.+), Số lượng: (\d+), Giá: (.+), Đơn vị: (.+), Ngày hết hạn: (.+)/);
+        console.log("Match:", match);
+        if (match) {
+            const expireDate = match[6].trim() || ''; // Get the expiration date, return blank if undefined
+            return [match[1], match[2], match[3], match[4], match[5], expireDate];
+        }
     }
-    return ['', '', '', ''];
+    
+    // Return an empty array if parsing fails
+    return ['', '', '', '', '', ''];
 }
+
+
 
 function clearSearch() {
     searchResults = []; // Clear search results array
