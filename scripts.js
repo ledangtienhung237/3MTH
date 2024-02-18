@@ -81,7 +81,11 @@ function suggestGoods() {
 }
 
 function search() {
-    const input = document.getElementById('searchInput').value.trim().toLowerCase(); // Trim whitespace from input and convert to lowercase
+    const inputElement = document.getElementById('searchInput');
+    const input = inputElement.value.trim().toLowerCase(); // Trim whitespace from input and convert to lowercase
+
+    // Clear the search input field
+    inputElement.value = '';
 
     // Search for the input in index [1]
     const result = allData.find(row => row[1].toLowerCase() === input);
@@ -124,16 +128,19 @@ function displayResults() {
     table.style.borderCollapse = 'collapse'; // Add border collapse for table
     
     // Create table header
-    const headerRow = document.createElement('tr');
-    const headers = ['Mã hàng', 'Tên hàng', 'Số lượng', 'Giá', 'Đơn vị', 'Ngày hết hạn', 'Đặt hàng']; // Updated headers to include unit, expiration date, and order button
-    headers.forEach(headerText => {
-        const headerCell = document.createElement('th');
-        headerCell.textContent = headerText;
-        headerCell.style.border = '1px solid black'; // Add border to header cell
-        headerRow.appendChild(headerCell);
-    });
+// Create table header
+const headerRow = document.createElement('tr');
+const headers = ['Mã hàng', 'Tên hàng', 'Số lượng', 'Giá', 'Đơn vị', 'Ngày hết hạn', 'Đặt hàng']; // Updated headers to include unit, expiration date, and order button
+headers.forEach(headerText => {
+    const headerCell = document.createElement('th');
+    headerCell.textContent = headerText;
+    headerCell.style.border = '1px solid black'; // Add border to header cell
+    headerRow.appendChild(headerCell);
+});
     table.appendChild(headerRow);
 
+
+    
     // Create table rows for search results
     searchResults.forEach(result => {
         const [code, name, quantity, price, unit, expirationDate] = parseResult(result);
@@ -196,7 +203,6 @@ function displayResults() {
 
 
 
-// Function to add item to order when the order button is clicked
 function addToOrder(event) {
     const code = event.target.dataset.code;
     const orderTableBody = document.getElementById('orderTableBody');
@@ -205,11 +211,12 @@ function addToOrder(event) {
     const result = allData.find(row => row[0].trim() === code);
 
     if (result) {
-        const [_, name, pricePerUnit] = result;
+        const [_, name, quantity, pricePerUnit, unit, expireDate] = result;
         const numericPricePerUnit = parseFloat(pricePerUnit.replace(/\D/g, '')); // Remove non-numeric characters from price
 
         // Create a new row for the ordered item
         const row = document.createElement('tr');
+        
 
         // Create cells for the item details
         const codeCell = document.createElement('td');
@@ -234,6 +241,16 @@ function addToOrder(event) {
         priceCell.textContent = formatCurrency(0); // Initial price set to 0
         row.appendChild(priceCell);
 
+        // Add a cell for the unit
+        const unitCell = document.createElement('td');
+        unitCell.textContent = unit;
+        row.appendChild(unitCell);
+
+        // Add a cell for the expiration date
+        const expireDateCell = document.createElement('td');
+        expireDateCell.textContent = expireDate;
+        row.appendChild(expireDateCell);
+
         // Create a remove button
         const removeButtonCell = document.createElement('td');
         const removeButton = document.createElement('button');
@@ -247,6 +264,7 @@ function addToOrder(event) {
         orderTableBody.appendChild(row);
     }
 }
+
 
 
 // Function to update price based on quantity input
@@ -302,6 +320,7 @@ function clearSearch() {
     displayResults(); // Clear displayed results
 }
 
+
 // Function to submit the order
 function submitOrder(event) {
     event.preventDefault(); // Prevent the form from submitting normally
@@ -320,9 +339,27 @@ function submitOrder(event) {
     // Do something with the order items (e.g., send them to a server)
     console.log('Order submitted:', orderItems);
 
+    // Clear the order form after submitting the order
+    clearOrderForm();
+
     // You can add further processing here, such as sending the order to a server
     // and displaying a confirmation message to the user.
 }
+
+// Function to clear the order form
+function clearOrderForm() {
+    // Reset the order form fields
+    const orderTableBody = document.getElementById('orderTableBody');
+    orderTableBody.innerHTML = ''; // Clear all rows from the order table body
+
+    // Reset the discount input field
+    const discountInput = document.getElementById('discountInput');
+    discountInput.value = '';
+
+    // Reset the total amount
+    updateTotalAmount();
+}
+
 
 // Add event listener to input field to handle "Enter" key press
 document.getElementById('searchInput').addEventListener('keydown', function(event) {
@@ -360,7 +397,6 @@ function updateTotalAmount() {
     const totalAmountCell = document.getElementById('totalAmount');
     totalAmountCell.textContent = formatCurrency(discountedAmount);
 }
-
 
 
 
