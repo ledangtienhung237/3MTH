@@ -68,7 +68,36 @@
         <div id="resultsContainer" class="results"></div>
         <!-- Add the dropdown element here -->
         <select id="suggestionsDropdown" onchange="selectSuggestion()" style="display: none;"></select>
-        
+        <!-- Cusomter From-->
+        <div class="form-group">
+            <label for="customer">Khách hàng:</label>
+            <input type="text" id="customer" list="customerList" oninput="suggestCustomers()" onkeydown="handleKeyPress(event)">
+            <datalist id="customerList"></datalist>
+        </div>
+        <div class="form-group">
+            <label for="unit">Người liên hệ:</label>
+            <input type="text" id="unit" readonly>
+        </div>
+        <div class="form-group">
+            <label for="saler">Nhân viên bán hàng:</label>
+            <input type="text" id="saler" readonly>
+        </div>
+        <div class="form-group">
+            <label for="address">Địa chỉ:</label>
+            <input type="text" id="address" readonly>
+        </div>
+        <div class="form-group">
+            <label for="deliveryAddress">Địa chỉ giao hàng:</label>
+            <input type="text" id="deliveryAddress">
+        </div>
+        <div class="form-group">
+            <label for="paymentMethod">Phương thức thanh toán:</label>
+            <select id="paymentMethod">
+                <option value="cash">Cash</option>
+                <option value="bank transfer">Bank Transfer</option>
+            </select>
+        </div>
+
         <!-- Order form -->
         <form id="orderForm" onsubmit="submitOrder(event)" style="display: none;">
             <h2>Order Form</h2>
@@ -80,6 +109,8 @@
                         <th>Tên hàng</th>
                         <th>Số lượng</th>
                         <th>Giá</th>
+                        <th>Đơn Vị</th>
+                        <th>Ngày Hết Hạn</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -112,6 +143,97 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script-navbar.js"></script>
     <script src="scripts.js"></script>
+    <script>
 
+        const API_KEY = 'AIzaSyCC44a5q3PVMDLMNHKkeNU6LmLDM9vxdL8'; // Replace 'YOUR_API_KEY' with your actual API key
+        const SPREADSHEET_ID = '1m5X3auqwLHbDnyOOwfJnmsuTbVO2KOewVo2pq0LRxgw'; // Replace 'YOUR_SPREADSHEET_ID' with your spreadsheet ID
+        const RANGE = 'dskh!A1:N1300'; // Adjust range as per your needs
+
+        let dataArray = []; // Variable to store the data
+        let selectedCustomer = ''; // Variable to store the selected customer from the datalist
+
+        function initClient() {
+            gapi.client.init({
+                apiKey: API_KEY,
+                discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
+                scope: 'https://www.googleapis.com/auth/spreadsheets.readonly'
+            }).then(function () {
+                fetchDataKH();
+                // Fetch data every 60 minutes
+                setInterval(fetchDataKH, 60 * 60 * 1000); // 60 minutes in milliseconds
+            }, function(error) {
+                console.error(error);
+            });
+        }
+
+        function fetchDataKH() {
+            gapi.client.sheets.spreadsheets.values.get({
+                spreadsheetId: SPREADSHEET_ID,
+                range: RANGE
+            }).then(function(response) {
+                let range = response.result;
+                if (range.values.length > 0) {
+                    dataArray = range.values;
+                    // Do something with dataArray here
+                    console.log(dataArray);
+                } else {
+                    console.log('No data found.');
+                }
+            }, function(response) {
+                console.error('Error fetchDataKH data: ' + response.result.error.message);
+            });
+        }
+
+        function suggestCustomers() {
+            let input = document.getElementById('customer');
+            let datalist = document.getElementById('customerList');
+            datalist.innerHTML = ''; // Clear previous suggestions
+            let inputVal = input.value.toLowerCase();
+            let suggestedCustomers = [];
+            for (let i = 0; i < dataArray.length; i++) {
+                let customer = dataArray[i][1].toLowerCase(); // Use index 1 for customer name
+                if (customer.includes(inputVal) && !suggestedCustomers.includes(customer)) {
+                    suggestedCustomers.push(customer);
+                    if (suggestedCustomers.length >= 5) break; // Limit suggestions to 5
+                }
+            }
+            suggestedCustomers.forEach(customer => {
+                let option = document.createElement('option');
+                option.value = customer;
+                datalist.appendChild(option);
+            });
+        }
+
+        // Auto-fill other fields when a suggestion is selected
+        document.getElementById('customer').addEventListener('change', function(event) {
+            let selectedCustomer = event.target.value.toLowerCase();
+            let selectedIndex = dataArray.findIndex(row => row[1].toLowerCase() === selectedCustomer);
+            if (selectedIndex !== -1) {
+                document.getElementById('unit').value = dataArray[selectedIndex][8] || ''; // Người liên hệ
+                document.getElementById('saler').value = dataArray[selectedIndex][10] || ''; // Nhân viên bán hàng
+                document.getElementById('address').value = dataArray[selectedIndex][2] || ''; // Địa chỉ
+                // Địa chỉ giao hàng is left blank as it depends on the user input
+            }
+        });
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                let input = document.getElementById('customer');
+                let suggestedOption = document.querySelector('#customerList option');
+                if (suggestedOption) {
+                    selectedCustomer = suggestedOption.value;
+                    input.value = selectedCustomer; // Fill input with selected customer
+                }
+            }
+        }
+
+        function handleClientLoad() {
+            gapi.load('client:auth2', initClient);
+        }
+    </script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script async defer src="https://apis.google.com/js/api.js"
+            onload="handleClientLoad()">
+    </script>
 </body>
 </html>
