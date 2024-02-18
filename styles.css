@@ -1,4 +1,20 @@
 /* styles.css */
+/*Đây là CSS cho bản Order*/
+/* Add this to your existing CSS file */
+.form-group {
+   margin-bottom: 20px;
+   display: flex;
+   align-items: center;
+}
+
+.form-group label {
+   flex: 0 0 150px; /* Fixed width for labels */
+   margin-right: 20px;
+}
+
+.form-group input {
+   flex: 1; /* Fill remaining space */
+}
 
 /* Header */
 .header {
@@ -140,3 +156,16 @@ html, body {
 /* Additional styling for other elements can go here */
 
 
+#suggestionsDropdown {
+   /* Set a minimum width and height for the dropdown */
+   min-width: 200px;
+   min-height: 100px;
+   /* Adjust other styles as needed */
+   max-height: 300px; /* Set a maximum height to enable scrolling if necessary */
+   overflow-y: auto; /* Enable vertical scrolling if the content exceeds the height */
+   border: 1px solid #ccc; /* Add a border for better visual separation */
+   border-radius: 5px; /* Add some border radius for a smoother appearance */
+   background-color: white; /* Set a background color */
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for depth */
+   z-index: 1; /* Ensure the dropdown appears above other elements */
+}
